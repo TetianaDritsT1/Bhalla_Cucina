@@ -3,169 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Cucina - Web3 Ресторан</title>
+    <title>Base Ecosystem Flashcards</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { box-sizing: border-box; }
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        .font-body { font-family: 'Inter', sans-serif; }
-        .gradient-bg {
-            background: linear-gradient(135deg, #0052FF 0%, #161616 100%);
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0052FF 0%, #0a0a0a 100%);
         }
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .card-container {
+            perspective: 1000px;
+            height: 320px;
         }
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 82, 255, 0.2);
-            border-color: #0052FF;
+        .card {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+            cursor: pointer;
         }
-        .price-badge {
-            background: #0052FF;
-            color: #ffffff;
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(0, 82, 255, 0.3);
         }
-        .category-active {
-            background: #0052FF;
-            color: #ffffff;
+        .card-back {
+            transform: rotateY(180deg);
         }
-        .add-btn {
-            background: #0052FF;
-            transition: all 0.3s ease;
-        }
-        .add-btn:hover {
-            background: #0038b8;
-            transform: scale(1.02);
-        }
-        .cart-item {
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
+        .card-container.is-flipped .card {
+            transform: rotateY(180deg);
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen font-body text-white">
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Header с фиолетово-синей стилистикой Base -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-12 border-b border-blue-500/30 pb-6">
-            <div>
-                <div class="flex items-center space-x-3 mb-2">
-                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg shadow-blue-500/50">🔵</div>
-                    <h1 class="text-4xl font-bold tracking-tight">Base Cucina</h1>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 text-white">
+
+    <div class="w-full max-w-xl bg-gray-900/95 border border-blue-500/30 rounded-3xl p-8 shadow-2xl backdrop-blur-md">
+        <div class="flex items-center justify-center space-x-2 mb-2">
+            <span class="text-2xl">🔵</span>
+            <h1 class="text-2xl font-bold tracking-tight text-white">Base Builder Academy</h1>
+        </div>
+        <p class="text-center text-blue-300 text-xs mb-6 font-mono">Флеш-карточки по разработке в сети Base & L2</p>
+
+        <!-- Блок прогресса -->
+        <div id="progressDisplay" class="text-xs font-mono font-semibold text-blue-400 mb-4 text-center bg-blue-500/10 py-1.5 rounded-lg border border-blue-500/20">Карточка 1 из 5</div>
+
+        <!-- Контейнер для 3D-карточки -->
+        <div id="cardContainer" class="card-container mb-8">
+            <div id="flashcard" class="card" onclick="flipCard()">
+                <!-- Передняя сторона (Термин) -->
+                <div id="cardFront" class="card-face card-front bg-gradient-to-br from-blue-900 to-gray-900 text-white">
+                    <span class="text-3xl font-bold">Что такое Base?</span>
                 </div>
-                <p class="text-blue-200 text-sm">Децентрализованный ресторанный заказ на сети Base (Builder Rewards)</p>
-            </div>
-            <div class="mt-4 md:mt-0 flex items-center space-x-4">
-                <span class="text-xs bg-blue-500/20 text-blue-300 border border-blue-500/40 px-3 py-1 rounded-full font-mono">Chain: Base Mainnet</span>
-                <button onclick="connectWallet()" id="wallet-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg transition flex items-center space-x-2">
-                    <span>🔌 Подключить кошелек</span>
-                </button>
+
+                <!-- Задняя сторона (Определение/Перевод) -->
+                <div id="cardBack" class="card-face card-back bg-gray-900 text-blue-100 border-2 border-blue-500">
+                    <span class="text-xl font-medium">Безопасный, недорогой блокчейн Ethereum L2, инкубируемый Coinbase</span>
+                </div>
             </div>
         </div>
 
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Menu Section -->
-            <div class="lg:col-span-2">
-                <!-- Category Tabs -->
-                <div class="flex flex-wrap gap-3 mb-8">
-                    <button onclick="showCategory('appetizers')" id="tab-appetizers" class="category-tab category-active px-6 py-2.5 rounded-xl font-medium transition-all duration-300 border border-blue-500/30">
-                        Закуски (Gas-free)
-                    </button>
-                    <button onclick="showCategory('pasta')" id="tab-pasta" class="category-tab bg-gray-900/60 text-gray-300 hover:bg-blue-600/20 px-6 py-2.5 rounded-xl font-medium transition-all duration-300 border border-blue-500/20">
-                        Паста (NFT Combo)
-                    </button>
-                    <button onclick="showCategory('desserts')" id="tab-desserts" class="category-tab bg-gray-900/60 text-gray-300 hover:bg-blue-600/20 px-6 py-2.5 rounded-xl font-medium transition-all duration-300 border border-blue-500/20">
-                        Десерты
-                    </button>
-                </div>
+        <!-- Кнопки навигации -->
+        <div class="flex justify-between space-x-3">
+            <button id="prevBtn" onclick="navigate(-1)" disabled class="flex-1 py-3 px-4 bg-gray-800 text-gray-400 font-semibold rounded-xl border border-blue-500/20 hover:bg-gray-700 disabled:opacity-30 transition">
+                ← Назад
+            </button>
+            <button onclick="flipCard()" class="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition">
+                Перевернуть
+            </button>
+            <button id="nextBtn" onclick="navigate(1)" class="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 disabled:opacity-30 transition">
+                Вперед →
+            </button>
+        </div>
+    </div>
 
-                <!-- Menu Items -->
-                <div id="menu-content">
-                    <!-- Appetizers -->
-                    <div id="appetizers" class="category-content">
-                        <h2 class="text-2xl font-semibold mb-6 text-blue-200">Закуски On-Chain</h2>
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div class="bg-gray-900/80 border border-blue-500/20 backdrop-blur-sm rounded-2xl p-6 card-hover">
-                                <div class="flex justify-between items-start mb-3">
-                                    <h3 class="text-lg font-semibold text-white">Брускетта Base</h3>
-                                    <span class="price-badge px-3 py-1 rounded-full text-xs font-mono font-bold">0.003 ETH</span>
-                                </div>
-                                <p class="text-gray-400 mb-4 text-sm leading-relaxed">Хрустящий тостерный хлеб с томатами и смарт-контрактом базилика</p>
-                                <button onclick="addToCart('Брускетта Base', 0.003)" class="add-btn text-white px-4 py-2.5 rounded-xl font-medium w-full text-sm shadow-md">
-                                    Заказать через Base
-                                </button>
-                            </div>
+    <script type="module">
+        const cards = [
+            { front: "Что такое Base?", back: "Безопасный, недорогой Ethereum L2 блокчейн, созданный Coinbase." },
+            { front: "Какое основное преимущество для Builder'ов?", back: "Получение вознаграждений за разработку (Builder Rewards) и низкие комиссии." },
+            { front: "На каком стеке технологий построена Base?", back: "На базе OP Stack вместе с оптимистичными роллапами." },
+            { front: "Какая валюта используется для оплаты газа в Base?", back: "Ethereum (ETH)" },
+            { front: "Как называется экосистемный токен-стандарт или сеть?", back: "Base Mainnet — экосистема для ончейн-миллиардов пользователей." }
+        ];
 
-                            <div class="bg-gray-900/80 border border-blue-500/20 backdrop-blur-sm rounded-2xl p-6 card-hover">
-                                <div class="flex justify-between items-start mb-3">
-                                    <h3 class="text-lg font-semibold text-white">Антипасто Builder</h3>
-                                    <span class="price-badge px-3 py-1 rounded-full text-xs font-mono font-bold">0.005 ETH</span>
-                                </div>
-                                <p class="text-gray-400 mb-4 text-sm leading-relaxed">Ассорти элитных итальянских деликатесов для участников экосистемы</p>
-                                <button onclick="addToCart('Антипасто Builder', 0.005)" class="add-btn text-white px-4 py-2.5 rounded-xl font-medium w-full text-sm shadow-md">
-                                    Заказать через Base
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+        let currentCardIndex = 0;
+        const cardContainer = document.getElementById('cardContainer');
+        const cardFront = document.getElementById('cardFront');
+        const cardBack = document.getElementById('cardBack');
+        const progressDisplay = document.getElementById('progressDisplay');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        function updateCardContent() {
+            const card = cards[currentCardIndex];
+            cardFront.querySelector('span').textContent = card.front;
+            cardBack.querySelector('span').textContent = card.back;
+            cardContainer.classList.remove('is-flipped');
+            progressDisplay.textContent = `Карточка ${currentCardIndex + 1} из ${cards.length}`;
+            prevBtn.disabled = currentCardIndex === 0; 
+            nextBtn.disabled = currentCardIndex === cards.length - 1;
+        }
 
-                    <!-- Pasta -->
-                    <div id="pasta" class="category-content hidden">
-                        <h2 class="text-2xl font-semibold mb-6 text-blue-200">Паста Layer-2</h2>
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div class="bg-gray-900/80 border border-blue-500/20 backdrop-blur-sm rounded-2xl p-6 card-hover">
-                                <div class="flex justify-between items-start mb-3">
-                                    <h3 class="text-lg font-semibold text-white">Спагетти Карбонара L2</h3>
-                                    <span class="price-badge px-3 py-1 rounded-full text-xs font-mono font-bold">0.006 ETH</span>
-                                </div>
-                                <p class="text-gray-400 mb-3 text-sm leading-relaxed">Классика оптимистичных rollup-рецептов с пармезаном</p>
-                                <button onclick="addToCart('Спагетти Карбонара L2', 0.006)" class="add-btn text-white px-4 py-2.5 rounded-xl font-medium w-full text-sm shadow-md">
-                                    Заказать через Base
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+        window.flipCard = function() {
+            cardContainer.classList.toggle('is-flipped');
+        }
+        
+        window.navigate = function(direction) {
+            let newIndex = currentCardIndex + direction;
+            if (newIndex >= 0 && newIndex < cards.length) {
+                currentCardIndex = newIndex;
+                updateCardContent();
+            }
+        }
 
-                    <!-- Desserts -->
-                    <div id="desserts" class="category-content hidden">
-                        <h2 class="text-2xl font-semibold mb-6 text-blue-200">Десерты</h2>
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div class="bg-gray-900/80 border border-blue-500/20 backdrop-blur-sm rounded-2xl p-6 card-hover">
-                                <div class="flex justify-between items-start mb-3">
-                                    <h3 class="text-lg font-semibold text-white">Тирамису Genesis</h3>
-                                    <span class="price-badge px-3 py-1 rounded-full text-xs font-mono font-bold">0.003 ETH</span>
-                                </div>
-                                <p class="text-gray-400 mb-4 text-sm leading-relaxed">Нежный десерт с маскарпоне и крипто-какао</p>
-                                <button onclick="addToCart('Тирамису Genesis', 0.003)" class="add-btn text-white px-4 py-2.5 rounded-xl font-medium w-full text-sm shadow-md">
-                                    Заказать через Base
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cart Section -->
-            <div class="lg:col-span-1">
-                <div class="bg-gray-900/90 border border-blue-500/30 backdrop-blur-sm rounded-2xl p-6 sticky top-8 shadow-xl">
-                    <h3 class="text-xl font-semibold mb-4 text-blue-200">Ваш заказ (Base Network)</h3>
-                    
-                    <div id="cart-items" class="space-y-4 mb-6">
-                        <div class="text-center text-gray-500 py-8">
-                            <p>Корзина пуста</p>
-                            <p class="text-xs mt-1 text-gray-400">Выберите блюда для транзакции</p>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-gray-800 pt-4 mb-6">
-                        <div class="flex justify-between items-center text-base font-semibold text-gray-200">
-                            <span>Итого (ETH):</span>
-                            <span id="total-price" class="text-blue-400 font-mono">0.000 ETH</span>
-                        </div>
-                        <div class="text-xs text-gray-400 mt-1 flex justify-between">
-                            <span>Gas Fee:</span>
-                            <span class="text-green-400 font-mono">~$0.001 (Optimized)</span>
+        updateCardContent();
+    </script>
+</body>
+</html>
+="text-green-400 font-mono">~$0.001 (Optimized)</span>
                         </div>
                     </div>
 
